@@ -9,32 +9,35 @@
 (function(urlHash){
 
 	if(!urlHash) {return;}
-	
-	var $ = unsafeWindow.jQuery;
-	var hash = "";
-	var target = null;
+	var hashTarget;
 	
 	function lazyload() {
-		if(typeof unsafeWindow.datalazyload == "undefined") {
-			setTimeout(lazyload,200);
-		}
-		else{
+		if("undefined" !== typeof unsafeWindow.datalazyload) {
 			unsafeWindow.datalazyload.userConfig.diff = 9999;
-			$(document).scrollTop(1);	
-			hash = urlHash.substring(urlHash.indexOf('#')+1);
-			scrollTo();
+			window.scrollTo(.1,0);	
+			var hash = urlHash.substring(urlHash.indexOf('#')+1);
+			return scrollTo(hash);
 		}
+		setTimeout(lazyload,200);
 	}
 	
-	function scrollTo() {
-		target = $("a[name='" +hash+ "']");
-		if(!target.length){
-			setTimeout(scrollTo,200);
-		}
-		else{
-			target.parent().css("font-weight","bold").parent(".lzl_post_hidden").show();
-			location.href=location.href;
-		}
+	function scrollTo(hash){    
+		var target = document.body;
+		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function() {
+				hashTarget = document.querySelector("a[name='" +hash+ "']");
+				if(hashTarget){
+					observer.disconnect();
+					var prNode = hashTarget.parentNode;
+					prNode.style.fontWeight ="bold";
+					prNode.parentNode.style.display = "block";
+					location.href=location.href;
+				}
+			});
+		});
+		var config = { attributes: true, childList: true, characterData: true };
+		observer.observe(target, config);
 	}
 	
 	lazyload();
