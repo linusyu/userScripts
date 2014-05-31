@@ -15,7 +15,7 @@
   
   function lazyload() {
     if("undefined" !== typeof unsafeWindow.datalazyload) {
-      unsafeWindow.datalazyload.userConfig.diff = 9999;
+      unsafeWindow.datalazyload.userConfig.diff = 99999;
       window.scrollTo(.1,0);  
       var hash = urlHash.substring(urlHash.indexOf('#')+1);
       return scrollTo(hash);
