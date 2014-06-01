@@ -8,7 +8,7 @@
 
 (function(urlHash){
 
-  "user strict";
+  "use strict";
 
   if(!urlHash) {return;}
   var hashTarget;
