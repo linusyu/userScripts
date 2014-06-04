@@ -2,7 +2,8 @@
 // @name        贴吧消息定位
 // @namespace   tieba.baidu.com
 // @include     http://tieba.baidu.com/f?ct=*
-// @version     2
+// @version     3
+// @downloadURL https://raw.githubusercontent.com/linusyu/userScripts/master/Tieba%20Location.user.js
 // @grant       unsafeWindow
 // ==/UserScript==
 
@@ -13,18 +14,18 @@
 	if(!urlHash) { return; }
 	var hashTarget;
 	var lzl;
-
+	var hash = urlHash.substring(urlHash.indexOf('#')+1);
+	scrollToNode();
+	
 	function lazyload() {
 		if("undefined" !== typeof unsafeWindow.datalazyload) {
 			unsafeWindow.datalazyload.userConfig.diff = 99999;
-			window.scrollTo(0,.1);  
-			var hash = urlHash.substring(urlHash.indexOf('#')+1);
-			return scrollTo(hash);
+			return window.scrollTo(0,document.documentElement.scrollTop + 1);
 		}
 		setTimeout(lazyload,200);
 	}
 
-	function scrollTo(hash){    
+	function scrollToNode(){    
 		var target = document.body;
 		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 		var observer = new MutationObserver(function(mutations) {
