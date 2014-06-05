@@ -20,8 +20,7 @@
 	function lazyload() {
 		if("undefined" !== typeof unsafeWindow.datalazyload) {
 			unsafeWindow.datalazyload.userConfig.diff = 99999;
-			var theScrollTop = document.body.scrollTop ? document.body.scrollTop : document.documentElement.scrollTop;
-			return window.scrollTo(0,theScrollTop + 1);
+			return window.scrollTo(0,(document.body.scrollTop || document.documentElement.scrollTop) + 1);
 		}
 		setTimeout(lazyload,200);
 	}
