@@ -3,7 +3,7 @@
 // @namespace   http://tieba.baidu.com/
 // @include     http://tieba.baidu.com/p/*
 // @include     http://tieba.baidu.com/f?ct*
-// @version     0.2
+// @version     0.3
 // @grant       none
 // ==/UserScript==
 
@@ -74,24 +74,31 @@
 			buttons:[{text: '关闭'}]
 		});
 		
-		var pages = [];
-		a.find(".j_pager a").each(function() {
-			var index = $(this).attr("index");
-			if (index){
-				return pages.push(index);
-			}
-			var page = $(this).attr("href");
-			pages.push(page.substring(1));
-		})
+		var last = a.find(".j_pager").children().last();
 		
-		var max = Math.max.apply(null, pages)
+		if(last.hasClass("tP")) {
+			var max = last.text();
+		}
+		else {
+			var pages = [];
+			a.find(".j_pager a").each(function() {
+				var index = $(this).attr("index");
+				if (index){
+					return pages.push(index);
+				}
+				var page = $(this).attr("href");
+				pages.push(page.substring(1));
+			})
+			var max = Math.max.apply(null, pages);
+		}
+		
 		for (i = 1; i <= max; i++) {
 			pageTurning(i,b);
 		}
 		
 		function pageTurning(p,b) {
 			var l = new Date;
-			l = l.getTime(),
+			l = l.getTime();
 			$.ajax({
 				url: '/p/comment',
 				data: {
