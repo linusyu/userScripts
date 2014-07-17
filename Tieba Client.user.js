@@ -7,7 +7,7 @@
 // @require     http://libs.baidu.com/jquery/2.0.0/jquery.min.js
 // @grant       GM_xmlhttpRequest
 // @author      网络中二行客
-// @version     0.9
+// @version     0.9.1
 // ==/UserScript==
 
 //MD5函数
@@ -622,29 +622,44 @@ var hexcase=0;var b64pad="";function hex_md5(s){return rstr2hex(rstr_md5(str2rst
             
             var data = new FormData();
             data.append('Filename', 'tieba_client.png');
-            data.append('fid', UW.PageData.forum.id);
+            data.append('fid', pd.forum.id);
             data.append('file', blob);
             data.append('tbs', tbs);
+			data.append('is_wm',1);
             
-            GM_xmlhttpRequest({
-                method: 'POST',
-                url: 'http://upload.tieba.baidu.com/upload/pic?is_wm=1',
-                data: data,
-                onload: hugHandler
-            });
+            var fileXHR = new XMLHttpRequest();		
+			fileXHR.withCredentials = true;
+			fileXHR.upload.onprogress = progressHandler;
+			fileXHR.onload = onloadHandler;
+			fileXHR.open("post",'http://upload.tieba.baidu.com/upload/pic',true);
+			fileXHR.send(data);	
         }
-        function hugHandler (res) {
-            var
-                res = JSON.parse(res.responseText),
-                fullWidth = res.info.fullpic_width,
-                fullHeight = res.info.fullpic_height,
-                picId = res.info.pic_id_encode;
-                pic = '#(pic,' +picId+ ',' +fullWidth+ ',' +fullHeight+ ')';
-                
-            $('#ueditor_replace').append(pic);
-            $('.dialogJmodal,.dialogJ,#tc_change_wrap') .remove();
-			isHome ? hug()  : hugPost();
+		
+        function onloadHandler (r) {
+			try{
+				var
+					r = JSON.parse(r.target.responseText),
+					fullWidth = r.info.fullpic_width,
+					fullHeight = r.info.fullpic_height,
+					picId = r.info.pic_id_encode;
+					pic = '#(pic,' +picId+ ',' +fullWidth+ ',' +fullHeight+ ')';
+					
+				$('#ueditor_replace').append(pic);
+				$('.dialogJmodal,.dialogJ,#tc_change_wrap') .remove();
+				isHome ? hug()  : hugPost();
+			}
+			catch(e){
+				$("#tc_status").html('<b style="color:red">上传出现异常，请重试。</b>');
+			}
         }
+		
+		function progressHandler(e){
+			if(e.lengthComputable){
+				var howmuch = (e.loaded / e.total) * 100;
+				$("#tc_status").text("正在上传: "+Math.ceil(howmuch)+"%");			
+			}
+		}
+		
         function dataUrlToBlob(dataURL) {
             var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
             var byteString = atob(dataURL.split(',')[1]);
