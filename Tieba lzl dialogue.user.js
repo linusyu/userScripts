@@ -3,7 +3,7 @@
 // @namespace   http://tieba.baidu.com/
 // @include     http://tieba.baidu.com/p/*
 // @include     http://tieba.baidu.com/f?ct*
-// @version     0.3
+// @version     0.4
 // @grant       none
 // ==/UserScript==
 
@@ -11,6 +11,7 @@
 
 	var cssText ='#dialogJbody .lzl_single_post{\
 		border-bottom: 1px dotted #d7d7d7;\
+		list-style: outside none none;\
 		margin-top: 6px;\
 		padding-top: 10px;\
 		min-width: 570px;}\
@@ -26,7 +27,10 @@
 		cursor: pointer;\
 		padding-right: 5px;}\
 	.tb_alert_wrapper{\
-		-moz-box-ordinal-group: 1000;}';
+		-moz-box-ordinal-group: 1000;}\
+	#user_visit_card{\
+		z-index: 50010 !important;\
+	}';
 	$("head").append("<style>"+cssText+"</style>");
 	
 	function getUserName(s) {
